@@ -1,6 +1,6 @@
 # Flux3D Engine
 
-![Flux3D Logo](logo.png)
+![Flux3D Logo](logo.jpg)
 
 Flux3D is a modern three-dimensional graphics engine built on C++, integrating advanced Bullet Physics, cutting-edge rendering with shadow support, and an interactive user interface powered by ImGui.
 
