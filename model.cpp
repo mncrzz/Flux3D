@@ -1,11 +1,11 @@
 #include "model.h"
 #include "shader_s.h"
 
-// НЕ ДЕЛАЙТЕ это здесь - оно уже в stb_image.cpp
+// ГЌГ… Г„Г…Г‹ГЂГ‰Г’Г… ГЅГІГ® Г§Г¤ГҐГ±Гј - Г®Г­Г® ГіГ¦ГҐ Гў stb_image.cpp
 // #define STB_IMAGE_IMPLEMENTATION
 // #include "stb_image.h"
 
-// Вместо этого просто подключите заголовок
+// Г‚Г¬ГҐГ±ГІГ® ГЅГІГ®ГЈГ® ГЇГ°Г®Г±ГІГ® ГЇГ®Г¤ГЄГ«ГѕГ·ГЁГІГҐ Г§Г ГЈГ®Г«Г®ГўГ®ГЄ
 #include "stb_image.h"
 
 #include <iostream>
@@ -20,14 +20,14 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 void Mesh::Draw(Shader& shader)
 {
-    // Для совместимости с lighting шейдером
+    // Г„Г«Гї Г±Г®ГўГ¬ГҐГ±ГІГЁГ¬Г®Г±ГІГЁ Г± lighting ГёГҐГ©Г¤ГҐГ°Г®Г¬
     shader.use();
 
-    // Биндим текстуры
+    // ГЃГЁГ­Г¤ГЁГ¬ ГІГҐГЄГ±ГІГіГ°Г»
     unsigned int diffuseNr = 0;
     unsigned int specularNr = 0;
 
-    for (unsigned int i = 0; i < textures.size(); i++)
+    for (size_t i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
         std::string name = textures[i].type;
@@ -40,9 +40,9 @@ void Mesh::Draw(Shader& shader)
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
-    // Рисуем меш
+    // ГђГЁГ±ГіГҐГ¬ Г¬ГҐГё
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<size_t>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     glActiveTexture(GL_TEXTURE0);
@@ -56,24 +56,24 @@ void Mesh::setupMesh()
 
     glBindVertexArray(VAO);
 
-    // Загружаем данные вершин
+    // Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ Г¤Г Г­Г­Г»ГҐ ГўГҐГ°ГёГЁГ­
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-    // Загружаем индексы
+    // Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГЁГ­Г¤ГҐГЄГ±Г»
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-    // Устанавливаем атрибуты вершин
-    // Позиции
+    // Г“Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г ГІГ°ГЁГЎГіГІГ» ГўГҐГ°ГёГЁГ­
+    // ГЏГ®Г§ГЁГ¶ГЁГЁ
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 
-    // Нормали
+    // ГЌГ®Г°Г¬Г Г«ГЁ
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
 
-    // Текстурные координаты
+    // Г’ГҐГЄГ±ГІГіГ°Г­Г»ГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ»
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 
@@ -87,7 +87,7 @@ Model::Model(std::string const& path)
 
 void Model::Draw(Shader& shader)
 {
-    for (unsigned int i = 0; i < meshes.size(); i++)
+    for (size_t i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
 }
 
@@ -109,14 +109,14 @@ void Model::loadModel(std::string const& path)
 
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
-    // Обрабатываем все меши этого узла
+    // ГЋГЎГ°Г ГЎГ ГІГ»ГўГ ГҐГ¬ ГўГ±ГҐ Г¬ГҐГёГЁ ГЅГІГ®ГЈГ® ГіГ§Г«Г 
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(processMesh(mesh, scene));
     }
 
-    // Обрабатываем дочерние узлы
+    // ГЋГЎГ°Г ГЎГ ГІГ»ГўГ ГҐГ¬ Г¤Г®Г·ГҐГ°Г­ГЁГҐ ГіГ§Г«Г»
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
         processNode(node->mChildren[i], scene);
@@ -129,17 +129,17 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
 
-    // Вершины
+    // Г‚ГҐГ°ГёГЁГ­Г»
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
 
-        // Позиции
+        // ГЏГ®Г§ГЁГ¶ГЁГЁ
         vertex.Position.x = mesh->mVertices[i].x;
         vertex.Position.y = mesh->mVertices[i].y;
         vertex.Position.z = mesh->mVertices[i].z;
 
-        // Нормали
+        // ГЌГ®Г°Г¬Г Г«ГЁ
         if (mesh->HasNormals())
         {
             vertex.Normal.x = mesh->mNormals[i].x;
@@ -151,7 +151,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             vertex.Normal = glm::vec3(0.0f, 1.0f, 0.0f);
         }
 
-        // Текстурные координаты
+        // Г’ГҐГЄГ±ГІГіГ°Г­Г»ГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ»
         if (mesh->mTextureCoords[0])
         {
             vertex.TexCoords.x = mesh->mTextureCoords[0][i].x;
@@ -165,7 +165,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         vertices.push_back(vertex);
     }
 
-    // Индексы
+    // Г€Г­Г¤ГҐГЄГ±Г»
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
@@ -173,17 +173,17 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             indices.push_back(face.mIndices[j]);
     }
 
-    // Материалы
+    // ГЊГ ГІГҐГ°ГЁГ Г«Г»
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        // Диффузные текстуры
+        // Г„ГЁГґГґГіГ§Г­Г»ГҐ ГІГҐГЄГ±ГІГіГ°Г»
         std::vector<Texture> diffuseMaps = loadMaterialTextures(material,
             aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-        // Спекулярные текстуры
+        // Г‘ГЇГҐГЄГіГ«ГїГ°Г­Г»ГҐ ГІГҐГЄГ±ГІГіГ°Г»
         std::vector<Texture> specularMaps = loadMaterialTextures(material,
             aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
@@ -201,9 +201,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         aiString str;
         mat->GetTexture(type, i, &str);
 
-        // Проверка на дублирование текстур
+        // ГЏГ°Г®ГўГҐГ°ГЄГ  Г­Г  Г¤ГіГЎГ«ГЁГ°Г®ГўГ Г­ГЁГҐ ГІГҐГЄГ±ГІГіГ°
         bool skip = false;
-        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+        for (size_t j = 0; j < textures_loaded.size(); j++)
         {
             if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
             {
@@ -227,7 +227,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
     return textures;
 }
 
-// РЕАЛИЗАЦИЯ TextureFromFile ДОЛЖНА БЫТЬ ЗДЕСЬ
+// ГђГ…ГЂГ‹Г€Г‡ГЂГ–Г€Гџ TextureFromFile Г„ГЋГ‹Г†ГЌГЂ ГЃГ›Г’Гњ Г‡Г„Г…Г‘Гњ
 unsigned int TextureFromFile(const char* path, const std::string& directory)
 {
     std::string filename = directory + '/' + std::string(path);
