@@ -48,7 +48,7 @@ public:
         }
         catch (std::ifstream::failure& e)
         {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+            std::cout << "[ERROR]: An error occurred when opening the shader: " << e.what() << std::endl;
         }
 
         const char* vShaderCode = vertexCode.c_str();
@@ -145,15 +145,15 @@ private:
     void checkCompileErrors(unsigned int shader, std::string type)
     {
         int success;
-        char infoLog[1024];
+        char infoLog[1024]; 
         if (type != "PROGRAM")
         {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
             if (!success)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
-                    << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "[ERROR]: " << type << " shader compilation error \n"
+                    << infoLog << "\n -- --------------------------------------------------- -- ";
             }
         }
         else
@@ -162,8 +162,8 @@ private:
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
-                    << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "[ERROR]: " << type << " program linking error \n"
+                    << infoLog << "\n -- --------------------------------------------------- -- ";
             }
         }
     }
